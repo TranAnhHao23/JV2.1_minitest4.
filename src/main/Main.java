@@ -41,12 +41,7 @@ public class Main {
                 case 3:
                     System.out.print("Input Student ID: ");
                     int idDelete = sc.nextInt();
-                    if (manager.deleteStudent(idDelete) != null){
-                        System.out.println(manager.deleteStudent(idDelete));
-                        System.out.println("Delete success!");
-                    } else {
-                        System.out.println("Student ID doesn't exist!");
-                    }
+                    manager.deleteStudent(idDelete);
                     break;
                 case 4:
                     if (!manager.displayStudent().isEmpty()){

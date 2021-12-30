@@ -1,11 +1,9 @@
 package manage;
 
 import model.Student;
-import model.StudentComparator;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Scanner;
 
@@ -21,6 +19,11 @@ public class StudentManager {
         System.out.println("Input Student Info: ");
         System.out.print("ID: ");
         int id = sc.nextInt();
+        for (Student student : students) {
+            if (student.getId() == id) {
+                return null;
+            }
+        }
         sc.nextLine();
         System.out.print("Name: ");
         String name = sc.nextLine();
@@ -37,15 +40,21 @@ public class StudentManager {
     }
 
     public void addStudent() {
-        students.add(creatStudent());
-        writeCSV(displayStudent());
+        Student student = creatStudent();
+        if (student != null) {
+            students.add(student);
+            writeCSV(displayStudent());
+        } else {
+            System.out.println("ID matched. Fail!!!");
+        }
+
     }
 
     public Student updateStudent(int id) {
         for (int i = 0; i < students.size(); i++) {
             if (students.get(i).getId() == id) {
-                writeCSV(displayStudent());
                 students.set(i, creatStudent());
+                writeCSV(displayStudent());
                 return students.get(i);
             }
         }
@@ -53,14 +62,19 @@ public class StudentManager {
 
     }
 
-    public Student deleteStudent(int id) {
+    public void deleteStudent(int id) {
+        boolean check = false;
         for (Student student : students) {
             if (student.getId() == id) {
+                System.out.println(student);
                 students.remove(student);
-                return student;
+                writeCSV(displayStudent());
+                check = true;
             }
         }
-        return null;
+        if (!check){
+            System.out.println("Student ID doesn't exist!");
+        }
     }
 
     public ArrayList<Student> displayStudent() {
@@ -68,24 +82,27 @@ public class StudentManager {
     }
 
     public void arrangePointIncreasing() {
-        for (int i = 0; i < students.size(); i++) {
-            for (int j = 0; j < students.size(); j++) {
-                if (students.get(i).getAveragePoint() > students.get(j).getAveragePoint()){
-                    Student temp = students.get(i);
-                    students.set(i,students.get(j));
-                    students.set(j,temp);
-                }
-            }
-        }
+
+        students.sort((Comparator.comparing(Student::getAveragePoint)));
+
+//        for (int i = 0; i < students.size(); i++) {
+//            for (int j = 0; j < students.size(); j++) {
+//                if (students.get(i).getAveragePoint() > students.get(j).getAveragePoint()){
+//                    Student temp = students.get(i);
+//                    students.set(i,students.get(j));
+//                    students.set(j,temp);
+//                }
+//            }
+//        }
     }
 
     public void arrangePointDecreasing() {
         for (int i = 0; i < students.size(); i++) {
             for (int j = 0; j < students.size(); j++) {
-                if (students.get(i).getAveragePoint() < students.get(j).getAveragePoint()){
+                if (students.get(i).getAveragePoint() < students.get(j).getAveragePoint()) {
                     Student temp = students.get(i);
-                    students.set(i,students.get(j));
-                    students.set(j,temp);
+                    students.set(i, students.get(j));
+                    students.set(j, temp);
                 }
             }
         }
@@ -112,13 +129,15 @@ public class StudentManager {
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(PATH_NAME));
             String line = "";
-            while ((line = bufferedReader.readLine()) != null){
+            while ((line = bufferedReader.readLine()) != null) {
                 String[] studentInfo = line.split(",");
-                studentArrayList.add(new Student(Integer.parseInt(studentInfo[0]),studentInfo[1],Integer.parseInt(studentInfo[2]),Double.parseDouble(studentInfo[3]),Double.parseDouble(studentInfo[4]),Double.parseDouble(studentInfo[5])));
+                studentArrayList.add(new Student(Integer.parseInt(studentInfo[0]), studentInfo[1], Integer.parseInt(studentInfo[2]), Double.parseDouble(studentInfo[3]), Double.parseDouble(studentInfo[4]), Double.parseDouble(studentInfo[5])));
             }
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
         return studentArrayList;
     }
+
+
 }

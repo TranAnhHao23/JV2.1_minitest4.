@@ -38,16 +38,19 @@ public class StudentManager {
 
     public void addStudent() {
         students.add(creatStudent());
+        writeCSV(displayStudent());
     }
 
     public Student updateStudent(int id) {
         for (int i = 0; i < students.size(); i++) {
             if (students.get(i).getId() == id) {
+                writeCSV(displayStudent());
                 students.set(i, creatStudent());
                 return students.get(i);
             }
         }
         return null;
+
     }
 
     public Student deleteStudent(int id) {
